@@ -29,7 +29,14 @@ runs:
   steps:
       - uses: actions/checkout@c85c95e3d7251135ab7dc9ce3241c5835cc595a9 # ratchet:actions/checkout@v3
 
-      - name: Find latest version of terraform
+      - name: Find latest version of golang
+        id: golang
+        uses: oprypin/find-latest-tag@e1e0e606cc7e9ede25140a5a139b3a5a1b717ece # ratchet:oprypin/find-latest-tag@v1
+        with:
+          repository: golang/go
+          regex: '^go\d+\.\d+\.\d+$'
+
+      - name: Find latest version of packer
         id: packer
         uses: oprypin/find-latest-tag@e1e0e606cc7e9ede25140a5a139b3a5a1b717ece # ratchet:oprypin/find-latest-tag@v1
         with:
@@ -38,10 +45,12 @@ runs:
           regex: '^v\d+\.\d+\.\d+$'
 
       - name: Format terraform version correctly
-        id: strip-v-from-tag
+        id: strip-prefix-from-tag
         run: |
-          TAG=${{ steps.packer.outputs.tag }}
-          echo "PACKER_VERSION=${TAG#v}" >> $GITHUB_ENV
+          GO_TAG=${{ steps.golang.outputs.tag }}
+          PACKER_TAG=${{ steps.packer.outputs.tag }}
+          echo "GO_VERSION=${GO_TAG#go}" >> $GITHUB_ENV
+          echo "PACKER_VERSION=${PACKER_TAG#v}" >> $GITHUB_ENV
         shell: bash
 
       - name: Login to GitHub Container Registry
@@ -55,6 +64,7 @@ runs:
       - name: Build image
         run: |
           docker build -t ${{ inputs.image_name }}:${{ inputs.image_tag }} \
+          --build-arg GO_VERSION=${{ env.GO_VERSION }} \
           --build-arg PACKER_VERSION=${{ env.PACKER_VERSION }} \
           .
         shell: bash
