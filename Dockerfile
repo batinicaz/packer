@@ -19,4 +19,4 @@ RUN pip3 install --no-cache-dir ansible
 # Copy tools used by pre-commit hooks
 COPY --from=build /executables/packer /bin/packer
 
-ENTRYPOINT ["/bin/packer"]
+ENTRYPOINT ["/home/nonroot/go/bin/go"]
