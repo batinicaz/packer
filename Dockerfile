@@ -11,6 +11,8 @@ ARG GO_VERSION
 ENV PATH="${PATH}:/home/nonroot/.local/bin:/home/nonroot/go/bin"
 
 # Golang setup
+ENV GOCACHE=/home/nonroot/.cache
+RUN mkdir -p "/home/nonroot/.cache"
 RUN wget https://dl.google.com/go/go${GO_VERSION}.linux-amd64.tar.gz -O - | tar -C /home/nonroot -xzvf -
 
 # Pre-commit setup
