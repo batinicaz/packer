@@ -1,24 +1,15 @@
-FROM ubuntu:latest as build
+ARG GO_VERSION
+FROM golang:${GO_VERSION}-alpine
 ARG PACKER_VERSION
 
-RUN apt-get update && apt-get install -y curl git unzip
-RUN mkdir "/executables"
-RUN curl -fL https://releases.hashicorp.com/packer/${PACKER_VERSION}/packer_${PACKER_VERSION}_linux_amd64.zip -o packer.zip && unzip packer.zip && mv packer /executables
+# Update base and install ansible
+RUN apk --no-cache upgrade && apk add --no-cache ansible openssh
 
-FROM cgr.dev/chainguard/python:latest-dev
+# Install OCI
+RUN apk add --no-cache oci-cli --repository=https://dl-cdn.alpinelinux.org/alpine/edge/testing
 
-ARG GO_VERSION
-ENV PATH="${PATH}:/home/nonroot/.local/bin:/home/nonroot/go/bin"
-
-# Golang setup
-ENV GOCACHE=/home/nonroot/.cache
-RUN mkdir -p "/home/nonroot/.cache"
-RUN wget https://dl.google.com/go/go${GO_VERSION}.linux-amd64.tar.gz -O - | tar -C /home/nonroot -xzvf -
-
-# Pre-commit setup
-RUN pip3 install --no-cache-dir ansible
-
-# Copy tools used by pre-commit hooks
-COPY --from=build /executables/packer /bin/packer
-
-ENTRYPOINT ["/home/nonroot/go/bin/go"]
+# Install packer
+RUN wget https://releases.hashicorp.com/packer/${PACKER_VERSION}/packer_${PACKER_VERSION}_linux_amd64.zip -O packer.zip \
+    && unzip packer.zip \
+    && mv packer /bin \
+    && rm -rfv packer*

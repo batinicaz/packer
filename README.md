@@ -19,18 +19,12 @@ You can use the image in GitHub actions with a job definition like the one below
       - uses: actions/checkout@v3
 
       - name: Validate
-        uses: docker://ghcr.io/batinicaz/packer:latest
-        with:
-          args: |
-            validate
-            packer/packer.hcl
+        run: >
+          docker run --rm -v "$(pwd):/work" -w /work ghcr.io/batinicaz/packer:latest
+          packer validate packer/packer.hcl
 
       - name: Build
-        uses: docker://ghcr.io/batinicaz/packer:latest
-        with:
-           args: |
-              build
-              -timestamp-ui
-              -warn-on-undeclared-var
-              packer/packer.hcl
+        run: >
+          docker run --rm -v "$(pwd):/work" -w /work ghcr.io/batinicaz/packer:latest
+          packer build -timestamp-ui -warn-on-undeclared-var packer/packer.hcl
 ```
