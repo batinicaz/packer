@@ -3,7 +3,7 @@ FROM golang:${GO_VERSION}-alpine
 ARG PACKER_VERSION
 
 # Update base and install ansible
-RUN apk --no-cache upgrade && apk add --no-cache ansible openssh
+RUN apk --no-cache upgrade && apk add --no-cache ansible git openssh
 
 # Install OCI
 RUN apk add --no-cache oci-cli --repository=https://dl-cdn.alpinelinux.org/alpine/edge/testing
