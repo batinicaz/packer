@@ -5,6 +5,7 @@ Builds an image containing the latest versions of:
 * ansible
 * go
 * packer
+* terraform
 
 Built every day at 2AM to get latest changes and scanned for vulnerabilities using Aqua's [Trivy](https://github.com/aquasecurity/trivy).
 
