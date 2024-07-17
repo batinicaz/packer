@@ -50,6 +50,7 @@ runs:
         with:
           repository: hashicorp/terraform
           releases-only: true
+          regex: '^v\d+\.\d+\.\d+$'
 
       - name: Format versions correctly
         id: strip-prefix-from-tag
