@@ -50,6 +50,7 @@ runs:
         with:
           repository: hashicorp/terraform
           releases-only: true
+          regex: '^v\d+\.\d+\.\d+$'
 
       - name: Format versions correctly
         id: strip-prefix-from-tag
@@ -58,7 +59,7 @@ runs:
           PACKER_TAG=${{ steps.packer.outputs.tag }}
           TF_TAG=${{ steps.terraform.outputs.tag }}
           echo "GO_VERSION=${GO_TAG#go}" >> $GITHUB_ENV
-          echo "PACKER_VERSION=1.9.4" >> $GITHUB_ENV
+          echo "PACKER_VERSION=${PACKER_TAG#v}" >> $GITHUB_ENV
           echo "TF_VERSION=${TF_TAG#v}" >> $GITHUB_ENV
         shell: bash
 
